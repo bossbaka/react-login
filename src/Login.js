@@ -12,7 +12,6 @@ function Login() {
 
   const [user, setUser] = useState("");
   const [pw, setPw] = useState("");
-  const [matchPw, setMatchPw] = useState("");
 
   const [success, setSuccess] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -20,42 +19,46 @@ function Login() {
   const {
     handleSubmit,
     register,
-    watch,
     reset,
     formState: { errors },
   } = useForm();
 
-  let pwd = watch("password");
-
   useEffect(() => {
     setErrMsg("");
-  }, [user, pw, matchPw]);
+  }, [user, pw]);
 
   const onSubmit = async (e, values) => {
     console.log(e);
     console.log(values);
 
     try {
-      const respon = await axios.post(LOGIN_URL, JSON.stringify({ user, pw }), {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const respon = await axios.post(
+        LOGIN_URL,
+        JSON.stringify({ user, pwd: pw }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       console.log(respon?.data);
-      console.log(respon);
-      console.log(JSON.stringify(respon));
-      setSuccess(true);
 
+      const accessToken = respon?.data?.accessToken;
+      const roles = respon?.data?.roles;
+      setAuth({ user, pw, roles, accessToken });
+
+      setSuccess(true);
       setUser("");
       setPw("");
-      setMatchPw("");
       reset();
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
-      } else if (err.response?.status === 409) {
-        setErrMsg("Username Taken");
+      } else if (err.response?.status === 400) {
+        setErrMsg("Missing Username or Password");
+      } else if (err.response?.status === 401) {
+        setErrMsg("Unauthorized");
       } else {
-        setErrMsg("Registration Failed");
+        setErrMsg("Login Failed");
       }
       errRef.current.focus();
     }
@@ -64,6 +67,56 @@ function Login() {
   return (
     <div>
       <h1>Login</h1>
+      {success ? (
+        <>
+          <h1>You are logged in!</h1>
+          <br />
+          <p>
+            <a href="#">Go to Home</a>
+          </p>
+        </>
+      ) : (
+        <>
+          <p ref={errRef}>{errMsg}</p>
+          <h1>Sign In</h1>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <label>Username:</label>
+            <input
+              type="text"
+              {...register("user", {
+                value: user,
+                onChange: (e) => setUser(e.target.value),
+                required: "You must specify a Username",
+                pattern: {
+                  value: /^[A-z][A-z0-9-_]{3,23}$/,
+                  message: "Invalid Entry",
+                },
+              })}
+            />
+
+            <div className="error">{errors.user && errors.user.message}</div>
+
+            <label>Password:</label>
+            <input
+              type="password"
+              {...register("password", {
+                value: pw,
+                onChange: (e) => setPw(e.target.value),
+                required: "You must specify a password",
+              })}
+            />
+            <div className="error">
+              {errors.password && errors.password.message}{" "}
+            </div>
+
+            <button type="sumbit">Sign In</button>
+
+            <p>
+              Need an Account? <br /> <a href="#"> Sign Up </a>
+            </p>
+          </form>
+        </>
+      )}
     </div>
   );
 }
