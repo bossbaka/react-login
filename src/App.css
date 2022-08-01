@@ -53,6 +53,11 @@ section {
   background-color: rgba(0,0,0,0.4);
   padding: 1.5rem;
   border-radius: 0.5rem;
+
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 form {
@@ -83,4 +88,15 @@ textarea {
 
 .error {
   color: red;
+}
+
+a, a:visited {
+  color: #fff;
+}
+
+.flexGrow {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
 }

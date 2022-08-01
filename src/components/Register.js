@@ -6,7 +6,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import axios from "./api/axios";
+import axios from "../api/axios";
+import { Link } from "react-router-dom";
 
 const REGISTER_URL = "/register";
 
@@ -78,7 +79,7 @@ function Register() {
         <>
           <h1>Success!</h1>
           <p>
-            <a href="#"> Sign In </a>
+            <Link to="/login"> Sign In </Link>
           </p>
         </>
       ) : (
@@ -128,7 +129,7 @@ function Register() {
 
           <button type="sumbit">Sign Up</button>
           <p>
-            Already registered? <br /> <a href="#"> Sign In </a>
+            Already registered? <br /> <Link to="/login"> Sign In </Link>
           </p>
         </form>
       )}
