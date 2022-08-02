@@ -100,3 +100,15 @@ a, a:visited {
   justify-content: flex-start;
   align-items: flex-end;
 }
+
+.persistCheck {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 5px;
+}
+
+[type="checkbox"] {
+  height: 20px;
+  width: 20px;
+  margin: 0 5px 2px 2px;
+}
